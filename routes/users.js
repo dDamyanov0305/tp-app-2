@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const router = express.Router();
 const User = require('../models/User');
+const { forwardAuthenticated } = require('../config/auth');
 
 router.get('/signup', (req,res)=>{ res.send('signup'); });
 
@@ -44,6 +45,10 @@ router.post('/signup', (req,res)=>{
                             .save()
                             .then(()=>{
                                 //redirect with signed in user
+                                passport.authenticate('local', {
+                                    successRedirect:'/home',
+                                    failureRedirect:'/users/login',
+                                })(req,res,next);
                             })
                             .catch(err=>{console.log(err)});
                     }
