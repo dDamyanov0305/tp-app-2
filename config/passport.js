@@ -19,6 +19,7 @@ module.exports=(passport)=>{
                             throw err;
 
                         if(match){
+                            console.log('stiga');
                             return(done, user);
                         }
                         else{
