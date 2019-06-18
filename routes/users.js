@@ -7,6 +7,8 @@ const { forwardAuthenticated } = require('../config/auth');
 
 router.get('/signup', (req,res)=>{ res.send('signup'); });
 
+router.get('/home', (req,res)=>{ console.log('svar6i');res.send('home'); });
+
 router.get('/login', (req,res)=>{ res.send('login'); });
 
 router.get('/logout', (req,res)=>{
@@ -14,10 +16,16 @@ router.get('/logout', (req,res)=>{
     res.redirect('/home');
 });
 
-router.post('/signup', (req,res)=>{
+router.get('/',(req,res)=>{
+    User.find({},(err,users)=>{
+        res.json(users);
+    })
+});
 
-    //before post req make validation in the client
+const createUser=(req,res,next)=>{
+
     const { name, email, password } = req.body;
+    console.log(req.body);
     
     //check if user exists
     User
@@ -32,41 +40,50 @@ router.post('/signup', (req,res)=>{
             //encrypt password
             bcrypt.genSalt(10,(err,salt)=>{
 
-                if(err)
-                    throw err;
+                if(err){
+                    console.log(err);
+                    res.sendStatus(500);
+                }
                 
                 bcrypt.hash(newUser.password, salt, (err, encrypted)=>{
                     if(err){
                         console.log(err);
+                        res.sendStatus(500);
                     }
                     else{
                         newUser.password=encrypted;
                         newUser
                             .save()
                             .then(()=>{
-                                //redirect with signed in user
-                                passport.authenticate('local', {
-                                    successRedirect:'/home',
-                                    failureRedirect:'/users/login',
-                                })(req,res,next);
+                                console.log('redirectva');
+                                next();
                             })
-                            .catch(err=>{console.log(err)});
+                            .catch((err)=>{
+                                console.log(err);
+                                res.sendStatus(500);
+                            });
                     }
                 });
                 
             });
   
     });
+}
 
-});
-
-router.post('/login', (req,res,next)=>{
+const logInNewUser=(req,res,next)=>{
+    console.log('loginva');
     passport.authenticate('local', {
-        successRedirect:'/home',
+        successRedirect:'/users/home',
         failureRedirect:'/users/login',
     })(req,res,next);
+}
+
+router.post('/signup', [createUser, logInNewUser],(req,res)=>{
+    res.sendStatus(200);
+   
 });
 
+router.post('/login', logInNewUser);
 
 
 module.exports=router;
