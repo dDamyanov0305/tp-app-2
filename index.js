@@ -1,12 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const passport = require('passport');
-<<<<<<< HEAD
-=======
 const session = require("express-session");
 const generalRouter = express.Router();
 const bodyParser = require('body-parser');
->>>>>>> a64c29c1b9eef98cff823bdbaecf79e351b0eba2
 
 const app = express();
 
