@@ -4,22 +4,22 @@ const ObjectID = mongoose.SchemaTypes.ObjectId;
 const CarSchema = new mongoose.Schema({
     brandID:{
         type:ObjectID,
-        required:true,
+        required:true
     },
     model:{
         type:String,
-        required:true,
+        required:true
     },
     year:{
-        type:Date,
-        required:true,
+        type:Number,
+        required:true
     },
     specs:{
         enginePower:Number,
         engineLiters:Number,
         doors:Number,
         seats:Number,
-        maxSpeed:Number,
+        maxSpeed:Number
     }
 });
 
