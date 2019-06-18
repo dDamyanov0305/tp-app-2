@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 const ObjectID = mongoose.SchemaTypes.ObjectId;
 
 const CarSchema = new mongoose.Schema({
-	carID: {
-		type: Number,
-		required: true
-	},
     model:{
         type:String,
         required:true
@@ -26,3 +22,15 @@ const CarSchema = new mongoose.Schema({
 const Car = mongoose.model("Car", CarSchema);
 
 module.exports = Car;
+
+// {
+    // "model": "audi",
+    // "year": 2019,
+    // "specs": {
+    // 	"enginePower": 3000,
+    // 	"engineLiters": 200,
+    // 	"doors": 4,
+    // 	"seats": 5,
+    // 	"maxSpeed": 400
+    // }
+// }
