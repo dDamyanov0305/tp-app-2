@@ -1,19 +1,21 @@
 const mongoose = require('mongoose');
 
 const BrandSchema = new mongoose.Schema({
+   id:{
+	   type:Number
+   }
    name:{
        type:String,
-       required:true, 
+       required:true
    },
    estYear:{
        type:Date,
-       default: Date.now,
+       default: Date.now
    },
    factories:{
        type:[String],
-       default:undefined,
-   },
-
+       default:undefined
+   }
 });
 
 const Brand = mongoose.model("Brand", BrandSchema);

@@ -1,4 +1,4 @@
-onst express = require("express");
+const express = require("express");
 const mongoose = require("mongoose");
 const passport = require('passport');
 const session = require("express-session");
@@ -6,7 +6,6 @@ const generalRouter = express.Router();
 const bodyParser = require('body-parser');
 
 const app = express();
-
 app.use(bodyParser.json());
 
 require('./config/passport')(passport);
@@ -23,6 +22,7 @@ mongoose
 
 //enable body parsing
 //app.use(express.urlencoded({ extended:false }));
+
 
 app.use(passport.initialize());
 app.use(passport.session());
