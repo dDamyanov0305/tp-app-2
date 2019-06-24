@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Car = require('../models/Car');
-const mongoose = require('mongoose');
-const db = require('../config/keys').MongoURI;
 
 router.post('/create', (req, resp) => { // requires: all data without id
 	let car = new Car({
@@ -22,6 +20,21 @@ router.post('/get', (req, resp) => { // requires: id
 		resp.send(car);
 	})
 	.catch(err => resp.send(err));
+});
+
+router.get('/all',(req,res)=>{
+	Car.find({},(err,cars)=>{
+        res.json(cars);
+    });
+});
+
+router.post('/get_some',(req,res)=>{
+	Car.find()
+	   .limit(req.body.limit)
+	   .skip(req.body.limit*req.body.page)
+	   .exec((err,docs)=>{
+			res.json(docs);
+	})
 });
 
 router.post('/update', (req, resp) => { //requires: id + all of the data again
