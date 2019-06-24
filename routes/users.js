@@ -54,7 +54,7 @@ const createUser=(req,res)=>{
 
 const logIn = (req,res)=>{
     User
-    .findOne({email:req.email})
+    .findOne({email:req.body.email})
     .then(data=>{
         if(!data)
             res.sendStatus(404);
