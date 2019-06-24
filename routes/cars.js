@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Car = require('../models/Car');
+const verifyToken = require('./users').verifyToken;
 
-router.post('/create', (req, resp) => { // requires: all data without id
+router.post('/create',verifyToken, (req, resp) => { // requires: all data without id
 	let car = new Car({
 		model: req.body.model,
 		year: req.body.year,
@@ -37,7 +38,7 @@ router.post('/get_some',(req,res)=>{
 	})
 });
 
-router.post('/update', (req, resp) => { //requires: id + all of the data again
+router.post('/update',verifyToken, (req, resp) => { //requires: id + all of the data again
 	Car.updateOne(
 		{ _id: req.body._id },
 
@@ -53,7 +54,7 @@ router.post('/update', (req, resp) => { //requires: id + all of the data again
 	.catch(err => resp.send(err));
 });
 
-router.post('/delete', (req, resp) => { // requires: id
+router.post('/delete',verifyToken, (req, resp) => { // requires: id
 	Car.deleteOne({_id: req.body._id})
 	.then(() => {
 		resp.send('Removed car!');
