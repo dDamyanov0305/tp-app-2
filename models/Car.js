@@ -17,6 +17,9 @@ const CarSchema = new mongoose.Schema({
         seats:Number,
         maxSpeed:Number
     },
+	imgLink:{
+		type:String
+	},
 	img:{
 		type:String
 	}

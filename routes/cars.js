@@ -7,12 +7,13 @@ const imgur = require('imgur');
 
 imgur.setAPIUrl('link.com');
 
-function addCar(model, year, specs, img) {
+function addCar(model, year, specs, img, imgLink) {
 	let car = new Car({
-		model: req.body.model,
-		year: req.body.year,
-		specs: req.body.specs,
-		img: img
+		model,
+		year,
+		specs,
+		img,
+		imgLink
 	});
 
 	car.save()
@@ -26,10 +27,10 @@ router.post('/create', verifyToken, (req, resp) => { // requires: all data witho
 			console.log(err, authData);
 		  	resp.sendStatus(403);
 		} else {
-		imgur.uploadBase64(req.body.img)
+			imgur.uploadBase64(req.body.img)
 			.then(result => {
 				let prms = req.body;
-				addCar(prms.model, prms.year, prms.specs, result.data.link);
+				addCar(prms.model, prms.year, prms.specs, prms.img, result.data.link);
 			})
 			.catch(err => console.log(err));
 		}
@@ -64,16 +65,27 @@ router.post('/update', verifyToken, (req, resp) => { //requires: id + all of the
 		if(err) {
 		  res.sendStatus(403);
 		} else {
+			Car.findOne({'_id': req.body._id})
+			.then(car => {
+				let img, imgLink;
+				if (car.img == req.body.img) {
+					img = car.img;
+					imgLink = car.imgLink;
+				} else {
 
-			Car.updateOne(
-				{ _id: req.body._id },
-
-				{
-					model: req.body.model,
-					year: req.body.year,
-					specs: req.body.specs
 				}
-			)
+				Car.updateOne(
+					{ _id: req.body._id },
+
+					{
+						model: req.body.model,
+						year: req.body.year,
+						specs: req.body.specs,
+						img: img,
+						imgLink: imgLink
+					}
+				)
+			})
 			.then(() => {
 				resp.send('Updated car!');
 			})
