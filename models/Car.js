@@ -16,7 +16,10 @@ const CarSchema = new mongoose.Schema({
         doors:Number,
         seats:Number,
         maxSpeed:Number
-    }
+    },
+	img:{
+		type:String
+	}
 });
 
 const Car = mongoose.model("Car", CarSchema);

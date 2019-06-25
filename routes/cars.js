@@ -3,24 +3,35 @@ const router = express.Router();
 const Car = require('../models/Car');
 const verifyToken = require('./users').verifyToken;
 const jwt = require('jsonwebtoken');
+const imgur = require('imgur');
 
+imgur.setAPIUrl('link.com');
 
-router.post('/create',verifyToken, (req, resp) => { // requires: all data without id
+function addCar(model, year, specs, img) {
+	let car = new Car({
+		model: req.body.model,
+		year: req.body.year,
+		specs: req.body.specs,
+		img: img
+	});
+
+	car.save()
+	.then(() => resp.send(`Car added with id: ${car._id}!`))
+	.catch((err) => resp.send(err));
+}
+
+router.post('/create', verifyToken, (req, resp) => { // requires: all data without id
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if(err) {
-			console.log(err,authData)
-		  resp.sendStatus(403);
+			console.log(err, authData);
+		  	resp.sendStatus(403);
 		} else {
-		
-			let car = new Car({
-				model: req.body.model,
-				year: req.body.year,
-				specs: req.body.specs
-			});
-		
-			car.save()
-			.then(() => resp.send(`Car added with id: ${car._id}!`))
-			.catch((err) => resp.send(err));
+		imgur.uploadBase64(req.body.img)
+			.then(result => {
+				let prms = req.body;
+				addCar(prms.model, prms.year, prms.specs, result.data.link);
+			})
+			.catch(err => console.log(err));
 		}
 	});
 });
@@ -33,13 +44,13 @@ router.post('/get', (req, resp) => { // requires: id
 	.catch(err => resp.send(err));
 });
 
-router.get('/all',(req,res)=>{
-	Car.find({},(err,cars)=>{
+router.get('/all', (req, res) => {
+	Car.find({}, (err, cars) => {
         res.json(cars);
     });
 });
 
-router.post('/get_some',(req,res)=>{
+router.post('/get_some', (req, res) => {
 	Car.find()
 	   .limit(req.body.limit)
 	   .skip(req.body.limit*req.body.page)
@@ -48,15 +59,15 @@ router.post('/get_some',(req,res)=>{
 	})
 });
 
-router.post('/update',verifyToken, (req, resp) => { //requires: id + all of the data again
+router.post('/update', verifyToken, (req, resp) => { //requires: id + all of the data again
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if(err) {
 		  res.sendStatus(403);
 		} else {
-		
+
 			Car.updateOne(
 				{ _id: req.body._id },
-		
+
 				{
 					model: req.body.model,
 					year: req.body.year,
@@ -69,10 +80,10 @@ router.post('/update',verifyToken, (req, resp) => { //requires: id + all of the 
 			.catch(err => resp.send(err));
 		}
 	});
-	
+
 });
 
-router.post('/delete',verifyToken, (req, resp) => { // requires: id
+router.post('/delete', verifyToken, (req, resp) => { // requires: id
 	jwt.verify(req.token, 'secretkey', (err, authData) => {
 		if(err) {
 		  res.sendStatus(403);
@@ -84,7 +95,7 @@ router.post('/delete',verifyToken, (req, resp) => { // requires: id
 			.catch(err => resp.send(err));
 		}
 	});
-	
+
 });
 
 module.exports = router;
